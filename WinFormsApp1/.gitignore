@@ -8,5 +8,8 @@
 *.userosscache
 *.sln.docstates
 
+bin/
+obj/
+
 # User-specific folders
 .vs/
