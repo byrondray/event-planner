@@ -53,9 +53,9 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(962, 157);
+            pictureBox1.Location = new Point(1072, 131);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(446, 460);
+            pictureBox1.Size = new Size(846, 689);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -198,7 +198,7 @@
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.AliceBlue;
-            ClientSize = new Size(1455, 1145);
+            ClientSize = new Size(2048, 1110);
             Controls.Add(label3);
             Controls.Add(trackBar1);
             Controls.Add(label2);

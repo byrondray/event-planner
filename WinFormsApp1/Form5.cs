@@ -14,23 +14,26 @@ namespace WinFormsApp1
         private int userId;
         private bool isAdmin;
 
+        private bool isResizing = false;
+        private Point lastMousePosition;
+
         public Form5(IDbConnectionService dbConnection, int eventId, int userId)
         {
             this.dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
             this.eventId = eventId;
             this.userId = userId;
             InitializeComponent();
+
+            picturePanel.MouseDown += PicturePanel_MouseDown;
+            picturePanel.MouseMove += PicturePanel_MouseMove;
+            picturePanel.MouseUp += PicturePanel_MouseUp;
         }
 
         private void Form5_Load(object sender, EventArgs e)
         {
-            dataGridView1.ReadOnly = true;
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            richTextBox1.ReadOnly = true;
-
             CheckIfUserIsAdmin();
+
+            flowLayoutPanel1.AutoScroll = true;
 
             label2.Visible = isAdmin;
             textBox1.Visible = isAdmin;
@@ -62,14 +65,13 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 dbConnection.CloseConnection();
             }
         }
-
 
         private void LoadEventUsers()
         {
@@ -89,26 +91,42 @@ namespace WinFormsApp1
 
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(reader);
+                        flowLayoutPanel1.Controls.Clear();
 
-                        if (dataTable.Rows.Count == 0)
+                        while (reader.Read())
                         {
-                            MessageBox.Show("No users found for this event.");
-                        }
-                        else
-                        {
-                            dataGridView1.DataSource = dataTable;
+                            Panel card = new Panel
+                            {
+                                Width = 300,
+                                Height = 100,
+                                BorderStyle = BorderStyle.FixedSingle,
+                                Padding = new Padding(10),
+                                Margin = new Padding(10)
+                            };
 
-                            dataGridView1.Columns["UserName"].HeaderText = "User Name";
-                            dataGridView1.Columns["IsAdmin"].HeaderText = "Admin Status";
+                            Label lblUserName = new Label
+                            {
+                                Text = $"Name: {reader["UserName"]}",
+                                AutoSize = true,
+                                Font = new Font("Arial", 10, FontStyle.Bold)
+                            };
+                            Label lblIsAdmin = new Label
+                            {
+                                Text = $"Admin: {(Convert.ToBoolean(reader["IsAdmin"]) ? "Yes" : "No")}",
+                                AutoSize = true
+                            };
+
+                            card.Controls.Add(lblUserName);
+                            card.Controls.Add(lblIsAdmin);
+
+                            flowLayoutPanel1.Controls.Add(card);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -116,13 +134,12 @@ namespace WinFormsApp1
             }
         }
 
-
         private void LoadEventDetails()
         {
             string eventQuery = @"
-                SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage
-                FROM Events
-                WHERE EventID = @EventID";
+        SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage
+        FROM Events
+        WHERE EventID = @EventID";
 
             try
             {
@@ -136,25 +153,52 @@ namespace WinFormsApp1
                     {
                         if (reader.Read())
                         {
-                            richTextBox1.Clear();
+                            flowLayoutPanelDetails.Controls.Clear();
 
-                            richTextBox1.Text = $"Event Name: {reader["EventName"]}\n" +
-                                                $"Event Date: {Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd")}\n" +
-                                                $"Frequency: {reader["Frequency"]}\n" +
-                                                $"Duration: {reader["Duration"]} hours\n" +
-                                                $"Description: {reader["Description"]}";
+                            AddDetailLabel("Event Name:", reader["EventName"].ToString());
+                            AddDetailLabel("Event Date:", Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"));
+
+                            AddDetailLabel("Frequency:", reader["Frequency"].ToString());
+                            AddDetailLabel("Duration:", $"{reader["Duration"]} hours");
+
+                            string description = reader["Description"].ToString();
+                            if (description.Contains("Name:") && description.Contains("Recurring:"))
+                            {
+                                description = "There is no description for this event";
+                            }
+
+                            AddDetailLabel("Description:", description);
 
                             if (reader["EventImage"] != DBNull.Value)
                             {
                                 byte[] imageBytes = (byte[])reader["EventImage"];
                                 using (MemoryStream ms = new MemoryStream(imageBytes))
                                 {
-                                    pictureBox1.Image = Image.FromStream(ms);
+                                    Image image = Image.FromStream(ms);
+
+                                    picturePanel.Controls.Clear();
+
+                                    PictureBox pictureBox = new PictureBox
+                                    {
+                                        Image = image,
+                                        SizeMode = PictureBoxSizeMode.AutoSize
+                                    };
+
+                                    picturePanel.Controls.Add(pictureBox);
+                                    picturePanel.AutoScroll = true;
                                 }
                             }
                             else
                             {
-                                pictureBox1.Image = null;
+                                picturePanel.Controls.Clear();
+                                Label noImageLabel = new Label
+                                {
+                                    Text = "No image available",
+                                    AutoSize = true,
+                                    Dock = DockStyle.Fill,
+                                    TextAlign = ContentAlignment.MiddleCenter
+                                };
+                                picturePanel.Controls.Add(noImageLabel);
                             }
                         }
                         else
@@ -166,11 +210,60 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 dbConnection.CloseConnection();
+            }
+        }
+
+        private void AddDetailLabel(string labelText, string valueText)
+        {
+            Label label = new Label
+            {
+                Text = $"{labelText} {valueText}",
+                AutoSize = true,
+                Margin = new Padding(5),
+                Font = new Font("Arial", 10, FontStyle.Regular)
+            };
+
+            flowLayoutPanelDetails.Controls.Add(label);
+        }
+
+
+        private void PicturePanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Location.X >= picturePanel.Width - 10 && e.Location.Y >= picturePanel.Height - 10)
+            {
+                isResizing = true;
+                lastMousePosition = e.Location;
+            }
+        }
+
+        private void PicturePanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isResizing)
+            {
+                picturePanel.Width += e.X - lastMousePosition.X;
+                picturePanel.Height += e.Y - lastMousePosition.Y;
+                lastMousePosition = e.Location;
+            }
+            else if (e.Location.X >= picturePanel.Width - 10 && e.Location.Y >= picturePanel.Height - 10)
+            {
+                picturePanel.Cursor = Cursors.SizeNWSE;
+            }
+            else
+            {
+                picturePanel.Cursor = Cursors.Default;
+            }
+        }
+
+        private void PicturePanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isResizing = false;
             }
         }
 
@@ -212,12 +305,63 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 dbConnection.CloseConnection();
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"Event_{eventId}_Details.csv");
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    writer.WriteLine("Event Details:");
+                    writer.WriteLine("Name,Date,Frequency,Duration,Description");
+
+                    foreach (Control control in flowLayoutPanelDetails.Controls)
+                    {
+                        if (control is Label label)
+                        {
+                            writer.WriteLine(label.Text.Replace(":", ",").Replace("\n", ""));
+                        }
+                    }
+
+                    writer.WriteLine("\nInvited Members:");
+                    writer.WriteLine("Username,IsAdmin");
+
+                    foreach (Control card in flowLayoutPanel1.Controls)
+                    {
+                        string username = "";
+                        string isAdmin = "";
+
+                        foreach (Control label in card.Controls)
+                        {
+                            if (label is Label lbl)
+                            {
+                                if (lbl.Text.StartsWith("Name:"))
+                                    username = lbl.Text.Substring(6);
+                                else if (lbl.Text.StartsWith("Admin:"))
+                                    isAdmin = lbl.Text.Substring(7);
+                            }
+                        }
+
+                        writer.WriteLine($"{username},{isAdmin}");
+                    }
+                }
+
+                MessageBox.Show($"Details exported successfully to {filePath}", "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

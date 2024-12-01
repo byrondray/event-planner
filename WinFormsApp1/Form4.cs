@@ -19,20 +19,17 @@ namespace WinFormsApp1
 
         private void Form4_Load_1(object sender, EventArgs e)
         {
-            dataGridView1.ReadOnly = true;
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            flowLayoutPanel1.AutoScroll = true;
             LoadUserEvents();
         }
 
         private void LoadUserEvents()
         {
             string query = @"
-                SELECT E.EventID, E.EventName, E.EventDate, E.Frequency, E.Duration, E.Description
-                FROM Events E
-                INNER JOIN UserEvents UE ON E.EventID = UE.EventID
-                WHERE UE.UserID = @UserID";
+        SELECT E.EventID, E.EventName, E.EventDate, E.Frequency, E.Duration, E.Description
+        FROM Events E
+        INNER JOIN UserEvents UE ON E.EventID = UE.EventID
+        WHERE UE.UserID = @UserID";
 
             try
             {
@@ -46,9 +43,79 @@ namespace WinFormsApp1
                     {
                         if (mySqlDataReader.HasRows)
                         {
-                            DataTable dataTable = new DataTable();
-                            dataTable.Load(mySqlDataReader);
-                            dataGridView1.DataSource = dataTable;
+                            flowLayoutPanel1.Controls.Clear(); // Clear previous items
+
+                            while (mySqlDataReader.Read())
+                            {
+                                // Create a card for each event
+                                Panel card = new Panel
+                                {
+                                    Width = 450,
+                                    Height = 150,
+                                    BorderStyle = BorderStyle.FixedSingle,
+                                    Padding = new Padding(10),
+                                    Margin = new Padding(10),
+                                    Cursor = Cursors.Hand // Indicate that it's clickable
+                                };
+
+                                // Add a click event to the card
+                                int eventId = Convert.ToInt32(mySqlDataReader["EventID"]);
+                                card.Click += (s, e) =>
+                                {
+                                    OpenEventForm(eventId);
+                                };
+
+                                // Create a TableLayoutPanel for better layout
+                                TableLayoutPanel table = new TableLayoutPanel
+                                {
+                                    ColumnCount = 1,
+                                    RowCount = 4,
+                                    Dock = DockStyle.Fill,
+                                    AutoSize = true
+                                };
+
+                                table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                                table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                                table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                                table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+                                // Add event details to the table
+                                Label lblName = new Label
+                                {
+                                    Text = $"Name: {mySqlDataReader["EventName"]}",
+                                    AutoSize = true,
+                                    Font = new Font("Arial", 10, FontStyle.Bold)
+                                };
+                                Label lblDate = new Label
+                                {
+                                    Text = $"Date: {Convert.ToDateTime(mySqlDataReader["EventDate"]).ToLongDateString()}",
+                                    AutoSize = true
+                                };
+                                Label lblFrequency = new Label
+                                {
+                                    Text = $"Recurring: {mySqlDataReader["Frequency"]}",
+                                    AutoSize = true
+                                };
+                                Label lblDuration = new Label
+                                {
+                                    Text = $"Duration: {mySqlDataReader["Duration"]} hours",
+                                    AutoSize = true
+                                };
+
+                                lblName.Click += (s, e) => OpenEventForm(eventId);
+                                lblDate.Click += (s, e) => OpenEventForm(eventId);
+                                lblFrequency.Click += (s, e) => OpenEventForm(eventId);
+                                lblDuration.Click += (s, e) => OpenEventForm(eventId);
+
+                                table.Controls.Add(lblName);
+                                table.Controls.Add(lblDate);
+                                table.Controls.Add(lblFrequency);
+                                table.Controls.Add(lblDuration);
+
+                                card.Controls.Add(table);
+
+                                flowLayoutPanel1.Controls.Add(card);
+                            }
                         }
                         else
                         {
@@ -67,16 +134,12 @@ namespace WinFormsApp1
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void OpenEventForm(int eventId)
         {
-            if (e.RowIndex >= 0) 
-            {
-                int eventId = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["EventID"].Value);
-
-                Form5 form5 = new Form5(dbConnection, eventId, userId);
-                form5.ShowDialog();
-            }
+            Form5 form5 = new Form5(dbConnection, eventId, userId);
+            form5.ShowDialog();
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {

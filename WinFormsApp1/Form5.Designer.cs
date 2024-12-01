@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            richTextBox1 = new RichTextBox();
-            dataGridView1 = new DataGridView();
-            pictureBox1 = new PictureBox();
             label2 = new Label();
             textBox1 = new TextBox();
             button1 = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            flowLayoutPanelDetails = new FlowLayoutPanel();
+            panel1 = new Panel();
+            picturePanel = new Panel();
+            button2 = new Button();
             SuspendLayout();
             // 
             // label1
@@ -49,35 +49,10 @@
             label1.TabIndex = 0;
             label1.Text = "Viewing Group";
             // 
-            // richTextBox1
-            // 
-            richTextBox1.Location = new Point(88, 157);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(581, 327);
-            richTextBox1.TabIndex = 1;
-            richTextBox1.Text = "";
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(795, 157);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 102;
-            dataGridView1.Size = new Size(959, 375);
-            dataGridView1.TabIndex = 2;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Location = new Point(88, 516);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(595, 344);
-            pictureBox1.TabIndex = 3;
-            pictureBox1.TabStop = false;
-            // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(820, 614);
+            label2.Location = new Point(88, 581);
             label2.Name = "label2";
             label2.Size = new Size(304, 41);
             label2.TabIndex = 4;
@@ -85,39 +60,77 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(1154, 614);
+            textBox1.Location = new Point(422, 581);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(357, 47);
+            textBox1.Size = new Size(359, 47);
             textBox1.TabIndex = 5;
             // 
             // button1
             // 
-            button1.Location = new Point(1533, 608);
+            button1.Location = new Point(801, 575);
             button1.Name = "button1";
-            button1.Size = new Size(188, 58);
+            button1.Size = new Size(190, 58);
             button1.TabIndex = 6;
             button1.Text = "Add";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Location = new Point(778, 157);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(1293, 375);
+            flowLayoutPanel1.TabIndex = 7;
+            // 
+            // flowLayoutPanelDetails
+            // 
+            flowLayoutPanelDetails.Location = new Point(98, 157);
+            flowLayoutPanelDetails.Name = "flowLayoutPanelDetails";
+            flowLayoutPanelDetails.Size = new Size(585, 375);
+            flowLayoutPanelDetails.TabIndex = 8;
+            // 
+            // panel1
+            // 
+            panel1.Location = new Point(1915, 1054);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(8, 8);
+            panel1.TabIndex = 9;
+            // 
+            // picturePanel
+            // 
+            picturePanel.Location = new Point(98, 690);
+            picturePanel.Name = "picturePanel";
+            picturePanel.Size = new Size(801, 433);
+            picturePanel.TabIndex = 10;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(1874, 581);
+            button2.Name = "button2";
+            button2.Size = new Size(188, 58);
+            button2.TabIndex = 11;
+            button2.Text = "Export";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // Form5
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.AliceBlue;
-            ClientSize = new Size(1899, 892);
+            ClientSize = new Size(2171, 1185);
+            Controls.Add(button2);
+            Controls.Add(picturePanel);
+            Controls.Add(panel1);
+            Controls.Add(flowLayoutPanelDetails);
+            Controls.Add(flowLayoutPanel1);
             Controls.Add(button1);
             Controls.Add(textBox1);
             Controls.Add(label2);
-            Controls.Add(pictureBox1);
-            Controls.Add(dataGridView1);
-            Controls.Add(richTextBox1);
             Controls.Add(label1);
             Name = "Form5";
             Text = "Form5";
             Load += Form5_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -125,11 +138,13 @@
         #endregion
 
         private Label label1;
-        private RichTextBox richTextBox1;
-        private DataGridView dataGridView1;
-        private PictureBox pictureBox1;
         private Label label2;
         private TextBox textBox1;
         private Button button1;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private FlowLayoutPanel flowLayoutPanelDetails;
+        private Panel panel1;
+        private Panel picturePanel;
+        private Button button2;
     }
 }

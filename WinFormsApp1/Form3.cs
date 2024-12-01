@@ -31,7 +31,6 @@ namespace WinFormsApp1
                 {
                     DataTable dataTable = new DataTable();
                     dataTable.Load(mySqlDataReader);
-                    dataGridView1.DataSource = dataTable;
                 }
             }
             catch (Exception ex)
