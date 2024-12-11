@@ -47,9 +47,53 @@ namespace WinFormsApp1
                 dbConnection.CloseConnection();
             }
 
+            LoadFriendsList();
+
+            checkedListBox2.ItemCheck += checkedListBox2_ItemCheck;
+
             listBox1.Items.Clear();
             listBox1.Items.Add("Admin:");
         }
+
+
+        private void LoadFriendsList()
+        {
+            string getFriendsQuery = @"
+                SELECT U.Username 
+                FROM Friends F
+                INNER JOIN Users U ON F.FriendID = U.UserID
+                WHERE F.UserID = @UserID";
+
+            try
+            {
+                dbConnection.OpenConnection();
+
+                using (MySqlCommand cmd = new MySqlCommand(getFriendsQuery, dbConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        checkedListBox2.Items.Clear();
+                        while (reader.Read())
+                        {
+                            string friendUsername = reader["Username"].ToString();
+                            checkedListBox2.Items.Add(friendUsername);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading friends list: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                dbConnection.CloseConnection();
+            }
+        }
+
+
 
 
         private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -118,6 +162,26 @@ namespace WinFormsApp1
             {
                 MessageBox.Show("Failed to add members to the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void checkedListBox2_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)(() =>
+            {
+                string selectedItem = checkedListBox2.Items[e.Index].ToString();
+
+                if (e.NewValue == CheckState.Checked)
+                {
+                    if (!checkedListBox1.Items.Contains(selectedItem)) 
+                    {
+                        checkedListBox1.Items.Add(selectedItem);
+                    }
+                }
+                else if (e.NewValue == CheckState.Unchecked)
+                {
+                    checkedListBox1.Items.Remove(selectedItem);
+                }
+            }));
         }
 
         private bool AddMembersToDatabase()
@@ -191,7 +255,7 @@ namespace WinFormsApp1
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            string getUserByUsernameQuery = "SELECT Username FROM Users WHERE Username = @Username";
+            string getUserByUsernameQuery = "SELECT UserID FROM Users WHERE Username = @Username";
             string username = textBox1.Text;
 
             try
@@ -204,7 +268,13 @@ namespace WinFormsApp1
 
                     if (result != null)
                     {
+                        int friendId = Convert.ToInt32(result);
+
                         checkedListBox1.Items.Add(username);
+
+                        AddFriend(userId, friendId);
+
+                        LoadFriendsList();
                     }
                     else
                     {
@@ -220,6 +290,35 @@ namespace WinFormsApp1
             {
                 dbConnection.CloseConnection();
             }
+        }
+
+
+        private void AddFriend(int userId, int friendId)
+        {
+            string addFriendQuery = @"
+        INSERT INTO Friends (UserID, FriendID) 
+        VALUES (@UserID, @FriendID)
+        ON DUPLICATE KEY UPDATE UserID = UserID";
+
+            try
+            {
+                using (MySqlCommand cmd = new MySqlCommand(addFriendQuery, dbConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@FriendID", friendId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding friend: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

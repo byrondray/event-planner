@@ -173,9 +173,9 @@ namespace WinFormsApp1
         private void LoadEventDetails()
         {
             string eventQuery = @"
-        SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage, Privacy
-        FROM Events
-        WHERE EventID = @EventID";
+                SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage, Privacy
+                FROM Events
+                WHERE EventID = @EventID";
 
             try
             {
@@ -191,22 +191,20 @@ namespace WinFormsApp1
                         {
                             flowLayoutPanelDetails.Controls.Clear();
 
-                            AddDetailLabel("Event Name:", reader["EventName"].ToString());
-                            AddDetailLabel("Event Date:", Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"));
-
-                            AddDetailLabel("Frequency:", reader["Frequency"].ToString());
-                            AddDetailLabel("Duration:", $"{reader["Duration"]} hours");
+                            AddDetailRow("Event Name:", reader["EventName"].ToString());
+                            AddDetailRow("Event Date:", Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"));
+                            AddDetailRow("Frequency:", reader["Frequency"].ToString());
+                            AddDetailRow("Duration:", $"{reader["Duration"]} hours");
 
                             string privacy = Convert.ToInt32(reader["Privacy"]) == 0 ? "Public" : "Private";
-                            AddDetailLabel("Privacy:", privacy);
+                            AddDetailRow("Privacy:", privacy);
 
                             string description = reader["Description"].ToString();
                             if (description.Contains("Name:") && description.Contains("Recurring:"))
                             {
                                 description = "There is no description for this event";
                             }
-
-                            AddDetailLabel("Description:", description);
+                            AddDetailRow("Description:", description);
 
                             if (reader["EventImage"] != DBNull.Value)
                             {
@@ -220,7 +218,9 @@ namespace WinFormsApp1
                                     PictureBox pictureBox = new PictureBox
                                     {
                                         Image = image,
-                                        SizeMode = PictureBoxSizeMode.AutoSize
+                                        SizeMode = PictureBoxSizeMode.Zoom,
+                                        Dock = DockStyle.Top,
+                                        Height = 200
                                     };
 
                                     picturePanel.Controls.Add(pictureBox);
@@ -256,6 +256,42 @@ namespace WinFormsApp1
                 dbConnection.CloseConnection();
             }
         }
+
+        private void AddDetailRow(string labelText, string valueText)
+        {
+            TableLayoutPanel detailTable = new TableLayoutPanel
+            {
+                ColumnCount = 2,
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+
+            detailTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); 
+            detailTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); 
+
+            Label lblName = new Label
+            {
+                Text = labelText,
+                Font = new Font("Arial", 10, FontStyle.Bold),
+                AutoSize = true,
+                Dock = DockStyle.Left
+            };
+
+            Label lblValue = new Label
+            {
+                Text = valueText,
+                Font = new Font("Arial", 10),
+                AutoSize = true,
+                Dock = DockStyle.Left
+            };
+
+            detailTable.Controls.Add(lblName, 0, 0);
+            detailTable.Controls.Add(lblValue, 1, 0);
+
+            flowLayoutPanelDetails.Controls.Add(detailTable);
+        }
+
 
         private bool IsUserInGroup()
         {

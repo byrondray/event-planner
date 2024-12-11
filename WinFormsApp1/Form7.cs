@@ -26,7 +26,7 @@ namespace WinFormsApp1
 
         private void LoadPublicGroups()
         {
-            string query = "SELECT EventID, EventName, EventDate, Description FROM Events WHERE Privacy = 0";
+            string query = "SELECT EventID, EventName, EventDate FROM Events WHERE Privacy = 0";
 
             try
             {
@@ -41,59 +41,41 @@ namespace WinFormsApp1
                         while (reader.Read())
                         {
                             int eventId = Convert.ToInt32(reader["EventID"]);
+                            string eventName = reader["EventName"].ToString();
+                            DateTime eventDate = Convert.ToDateTime(reader["EventDate"]);
 
                             Panel groupPanel = new Panel
                             {
                                 Width = 500,
-                                Height = 250,
+                                Height = 150, 
                                 BorderStyle = BorderStyle.FixedSingle,
                                 Padding = new Padding(10),
                                 Margin = new Padding(10),
-                                Tag = eventId // Assign eventId to the entire panel
+                                Tag = eventId
                             };
                             groupPanel.Click += GroupPanel_Click;
 
+                            // Event Name Label
                             Label lblEventName = new Label
                             {
-                                Text = $"Name: {reader["EventName"]}",
+                                Text = $"Name: {eventName}",
                                 Font = new Font("Arial", 12, FontStyle.Bold),
-                                AutoSize = true
+                                AutoSize = true,
+                                Location = new Point(10, 10)
                             };
-                            lblEventName.Click += (s, e) => GroupPanel_Click(groupPanel, e); // Attach panel click
+                            lblEventName.Click += (s, e) => GroupPanel_Click(groupPanel, e);
+                            groupPanel.Controls.Add(lblEventName);
 
+                            // Event Date Label
                             Label lblEventDate = new Label
                             {
-                                Text = $"Date: {Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd")}",
+                                Text = $"Date: {eventDate:yyyy-MM-dd}", // Format the date as yyyy-MM-dd
                                 Font = new Font("Arial", 10),
-                                AutoSize = true
+                                AutoSize = true,
+                                Location = new Point(10, lblEventName.Bottom + 5)
                             };
-                            lblEventDate.Click += (s, e) => GroupPanel_Click(groupPanel, e); // Attach panel click
-
-                            Label lblDescription = new Label
-                            {
-                                Text = $"Description: {reader["Description"]}",
-                                Font = new Font("Arial", 10),
-                                AutoSize = true
-                            };
-                            lblDescription.Click += (s, e) => GroupPanel_Click(groupPanel, e); // Attach panel click
-
-                            Button btnView = new Button
-                            {
-                                Text = "View",
-                                Tag = eventId,
-                                Dock = DockStyle.Bottom
-                            };
-                            btnView.Click += BtnView_Click;
-
-                            groupPanel.Controls.Add(lblEventName);
+                            lblEventDate.Click += (s, e) => GroupPanel_Click(groupPanel, e);
                             groupPanel.Controls.Add(lblEventDate);
-                            groupPanel.Controls.Add(lblDescription);
-                            groupPanel.Controls.Add(btnView);
-
-                            lblEventName.Location = new Point(10, 10);
-                            lblEventDate.Location = new Point(10, lblEventName.Bottom + 5);
-                            lblDescription.Location = new Point(10, lblEventDate.Bottom + 5);
-                            btnView.Location = new Point(10, lblDescription.Bottom + 10);
 
                             flowLayoutPanel1.Controls.Add(groupPanel);
                         }
@@ -109,6 +91,9 @@ namespace WinFormsApp1
                 dbConnection.CloseConnection();
             }
         }
+
+
+
 
 
         private void GroupPanel_Click(object sender, EventArgs e)

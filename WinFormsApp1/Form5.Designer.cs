@@ -88,9 +88,10 @@
             // 
             // flowLayoutPanelDetails
             // 
+            flowLayoutPanelDetails.Font = new Font("Segoe UI", 13F);
             flowLayoutPanelDetails.Location = new Point(98, 276);
             flowLayoutPanelDetails.Name = "flowLayoutPanelDetails";
-            flowLayoutPanelDetails.Size = new Size(585, 375);
+            flowLayoutPanelDetails.Size = new Size(701, 443);
             flowLayoutPanelDetails.TabIndex = 8;
             // 
             // panel1
@@ -146,7 +147,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "Form5";
-            Text = "Viewing Group";
+            Text = "Viewing Event";
             Load += Form5_Load;
             ResumeLayout(false);
             PerformLayout();
