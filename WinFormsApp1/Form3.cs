@@ -102,50 +102,9 @@ namespace WinFormsApp1
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string username = textBox1.Text;
-            string email = textBox2.Text;
-            string password = maskedTextBox1.Text;
-
-            string insertQuery = "INSERT INTO Users (Username, Email, Password) VALUES (@Username, @Email, @Password)";
-            string getIdQuery = "SELECT LAST_INSERT_ID()";
-
-            MySqlCommand insertCmd = new MySqlCommand(insertQuery, dbConnection.GetConnection());
-            MySqlCommand getIdCmd = new MySqlCommand(getIdQuery, dbConnection.GetConnection());
-
-            try
-            {
-                checkUsernameAndPassword();
-                checkEmail(email);
-
-                if (CheckUserExists(username, email))
-                {
-                    MessageBox.Show("Username or email already exists. Please use a different one.");
-                    return;
-                }
-
-                dbConnection.OpenConnection();
-                insertCmd.Parameters.AddWithValue("@Username", username);
-                insertCmd.Parameters.AddWithValue("@Email", email);
-                insertCmd.Parameters.AddWithValue("@Password", password);
-                insertCmd.ExecuteNonQuery();
-
-                int userId = Convert.ToInt32(getIdCmd.ExecuteScalar());
-
-                MessageBox.Show("User added successfully.");
-                UpdateGridView();
-
-                Form4 form1 = new Form4(dbConnection, userId);
-                form1.Show();
-                this.Hide();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-            finally
-            {
-                dbConnection.CloseConnection();
-            }
+            Form6 f6 = new Form6(dbConnection);
+            f6.Show();
+            this.Hide();
         }
 
 
@@ -154,7 +113,6 @@ namespace WinFormsApp1
         {
             string username = textBox1.Text;
             string newPassword = maskedTextBox1.Text;
-            string newEmail = textBox2.Text;
 
             string query = "UPDATE Users SET Password = @NewPassword, Email = @NewEmail WHERE Username = @Username";
             MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection());
@@ -162,12 +120,10 @@ namespace WinFormsApp1
             try
             {
                 checkUsernameAndPassword();
-                checkEmail(newEmail);
                 dbConnection.OpenConnection();
 
                 cmd.Parameters.AddWithValue("@Username", username);
                 cmd.Parameters.AddWithValue("@NewPassword", newPassword);
-                cmd.Parameters.AddWithValue("@NewEmail", newEmail);
 
                 int rowsAffected = cmd.ExecuteNonQuery();
                 if (rowsAffected > 0)
@@ -250,16 +206,9 @@ namespace WinFormsApp1
         private void button5_Click(object sender, EventArgs e)
         {
             string username = textBox1.Text;
-            string email = textBox2.Text;
             string password = maskedTextBox1.Text;
 
-            if (string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(email))
-            {
-                MessageBox.Show("Please enter a username or email.");
-                return;
-            }
-
-            string query = "SELECT UserID FROM Users WHERE (Username = @Username OR Email = @Email) AND Password = @Password";
+            string query = "SELECT UserID FROM Users WHERE (Username = @Username) AND Password = @Password";
             MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection());
 
             try
@@ -267,7 +216,6 @@ namespace WinFormsApp1
                 dbConnection.OpenConnection();
 
                 cmd.Parameters.AddWithValue("@Username", username);
-                cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Password", password);
 
                 object result = cmd.ExecuteScalar();

@@ -2,9 +2,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace WinFormsApp1
 {
@@ -29,6 +27,7 @@ namespace WinFormsApp1
             string frequency = comboBox1.SelectedItem.ToString();
             int duration = trackBar1.Value;
             string description = richTextBox1.Text;
+            int privacy = radioButton1.Checked ? 0 : 1;
             byte[] imageBytes = null;
 
             if (pictureBox1.Image != null)
@@ -40,8 +39,8 @@ namespace WinFormsApp1
                 }
             }
 
-            string query = "INSERT INTO Events (EventName, EventDate, EventImage, Frequency, Duration, Description) " +
-                           "VALUES (@EventName, @EventDate, @EventImage, @Frequency, @Duration, @Description)";
+            string query = "INSERT INTO Events (EventName, EventDate, EventImage, Frequency, Duration, Description, Privacy) " +
+                           "VALUES (@EventName, @EventDate, @EventImage, @Frequency, @Duration, @Description, @Privacy)";
 
             try
             {
@@ -54,6 +53,7 @@ namespace WinFormsApp1
                     cmd.Parameters.AddWithValue("@Frequency", frequency);
                     cmd.Parameters.AddWithValue("@Duration", duration);
                     cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@Privacy", privacy);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
@@ -63,21 +63,20 @@ namespace WinFormsApp1
                     }
                     else
                     {
-                        return 0;  
+                        return 0;
                     }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;  
+                return 0;
             }
             finally
             {
                 dbConnection.CloseConnection();
             }
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -92,7 +91,7 @@ namespace WinFormsApp1
             trackBar1.Maximum = 12;
 
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = 4;
+            progressBar1.Maximum = 5; // Updated for radio buttons
 
             richTextBox1.ReadOnly = true;
 
@@ -132,7 +131,8 @@ namespace WinFormsApp1
 
         private void inviteMembersButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(eventNameInput.Text) || comboBox1.SelectedIndex == 0 || pictureBox1.Image == null || trackBar1.Value == 0)
+            if (string.IsNullOrWhiteSpace(eventNameInput.Text) || comboBox1.SelectedIndex == 0 || pictureBox1.Image == null || trackBar1.Value == 0 ||
+                (!radioButton1.Checked && !radioButton2.Checked))
             {
                 MessageBox.Show("Please complete all required fields.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -141,7 +141,7 @@ namespace WinFormsApp1
             int eventID = AddEventToDatabase();
             if (eventID > 0)
             {
-                string eventName = eventNameInput.Text; 
+                string eventName = eventNameInput.Text;
                 Form2 f2 = new Form2(eventID, eventName, dbConnection, UserId);
                 f2.Show();
                 this.Hide();
@@ -160,11 +160,13 @@ namespace WinFormsApp1
             string eventDate = dateTimePicker1.Value.ToString("MMMM dd, yyyy");
             string frequency = comboBox1.SelectedItem.ToString();
             string hours = trackBar1.Value.ToString();
+            string privacy = radioButton1.Checked ? "Public" : radioButton2.Checked ? "Private" : "Not Selected";
 
             richTextBox1.Text = $"Name: {eventName}\n" +
                                 $"Time: {eventDate}\n" +
                                 $"Recurring: {frequency}\n" +
-                                $"Duration: {hours} hours";
+                                $"Duration: {hours} hours\n" +
+                                $"Privacy: {privacy}";
         }
 
         private void UpdateProgressBar()
@@ -191,6 +193,11 @@ namespace WinFormsApp1
                 progress++;
             }
 
+            if (radioButton1.Checked || radioButton2.Checked) // Radio button validation
+            {
+                progress++;
+            }
+
             progressBar1.Value = progress;
         }
 
@@ -199,109 +206,6 @@ namespace WinFormsApp1
             UpdateRichTextBox();
             UpdateProgressBar();
         }
-
-        //private void button1_Click_1(object sender, EventArgs e)
-        //{
-        //    string tableName = Interaction.InputBox("Enter table name");
-
-        //    string query = "CREATE TABLE IF NOT EXISTS Events (EventID INT PRIMARY KEY AUTO_INCREMENT, EventName VARCHAR(255) NOT NULL, EventDate DATE NOT NULL, EventImage BLOB, Frequency VARCHAR(50), Duration INT, Description TEXT, CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
-
-        //    try
-        //    {
-        //        dbConnection.OpenConnection();
-        //        MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection());
-        //        int i = cmd.ExecuteNonQuery();
-        //        if (i > -1)
-        //        {
-        //            MessageBox.Show("Table has been created");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        dbConnection.CloseConnection();
-        //    }
-        //}
-
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    string eventName = eventNameInput.Text;
-        //    DateTime eventDate = dateTimePicker1.Value;
-        //    string frequency = comboBox1.SelectedItem.ToString();
-        //    int duration = trackBar1.Value;
-        //    string description = richTextBox1.Text;
-        //    byte[] imageBytes = null;
-
-        //    if (pictureBox1.Image != null)
-        //    {
-        //        using (MemoryStream ms = new MemoryStream())
-        //        {
-        //            pictureBox1.Image.Save(ms, pictureBox1.Image.RawFormat);
-        //            imageBytes = ms.ToArray();
-        //        }
-        //    }
-
-        //    string query = "INSERT INTO Events (EventName, EventDate, EventImage, Frequency, Duration, Description) " +
-        //                   "VALUES (@EventName, @EventDate, @EventImage, @Frequency, @Duration, @Description)";
-
-        //    try
-        //    {
-        //        dbConnection.OpenConnection();
-        //        using (MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection()))
-        //        {
-        //            cmd.Parameters.AddWithValue("@EventName", eventName);
-        //            cmd.Parameters.AddWithValue("@EventDate", eventDate);
-        //            cmd.Parameters.AddWithValue("@EventImage", imageBytes);
-        //            cmd.Parameters.AddWithValue("@Frequency", frequency);
-        //            cmd.Parameters.AddWithValue("@Duration", duration);
-        //            cmd.Parameters.AddWithValue("@Description", description);
-
-        //            int rowsAffected = cmd.ExecuteNonQuery();
-        //            if (rowsAffected > 0)
-        //            {
-        //                MessageBox.Show("Event added successfully!");
-        //            }
-        //            else
-        //            {
-        //                MessageBox.Show("Failed to add event.");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error: " + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        dbConnection.CloseConnection();
-        //    }
-        //}
-
-        //private void button3_Click(object sender, EventArgs e)
-        //{
-        //    string query = "SELECT * FROM Events";
-        //    MySqlCommand mySqlCommand = new MySqlCommand(query, dbConnection.GetConnection());
-
-        //    try
-        //    {
-        //        dbConnection.OpenConnection();
-        //        MySqlDataReader mySqlDataReader = mySqlCommand.ExecuteReader();
-        //        if (mySqlDataReader != null)
-        //        {
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error: " + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        dbConnection.CloseConnection();
-        //    }
-        //}
 
         private void eventNameInput_TextChanged(object sender, EventArgs e)
         {
@@ -313,6 +217,11 @@ namespace WinFormsApp1
             {
                 errorProvider1.Clear();
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

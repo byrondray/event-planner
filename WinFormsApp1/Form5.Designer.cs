@@ -37,39 +37,43 @@
             panel1 = new Panel();
             picturePanel = new Panel();
             button2 = new Button();
+            button3 = new Button();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 11F);
-            label1.Location = new Point(88, 69);
+            label1.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            label1.Location = new Point(98, 57);
             label1.Name = "label1";
-            label1.Size = new Size(265, 50);
+            label1.Size = new Size(607, 106);
             label1.TabIndex = 0;
             label1.Text = "Viewing Group";
+            label1.Click += label1_Click;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(88, 581);
+            label2.Font = new Font("Segoe UI", 13F);
+            label2.Location = new Point(903, 240);
             label2.Name = "label2";
-            label2.Size = new Size(304, 41);
+            label2.Size = new Size(443, 60);
             label2.TabIndex = 4;
             label2.Text = "Add another member";
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(422, 581);
+            textBox1.Location = new Point(1355, 253);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(359, 47);
+            textBox1.Size = new Size(390, 47);
             textBox1.TabIndex = 5;
             // 
             // button1
             // 
-            button1.Location = new Point(801, 575);
+            button1.Font = new Font("Segoe UI", 13F);
+            button1.Location = new Point(1774, 240);
             button1.Name = "button1";
-            button1.Size = new Size(190, 58);
+            button1.Size = new Size(205, 79);
             button1.TabIndex = 6;
             button1.Text = "Add";
             button1.UseVisualStyleBackColor = true;
@@ -77,14 +81,14 @@
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(778, 157);
+            flowLayoutPanel1.Location = new Point(912, 354);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(1293, 375);
+            flowLayoutPanel1.Size = new Size(1067, 732);
             flowLayoutPanel1.TabIndex = 7;
             // 
             // flowLayoutPanelDetails
             // 
-            flowLayoutPanelDetails.Location = new Point(98, 157);
+            flowLayoutPanelDetails.Location = new Point(98, 276);
             flowLayoutPanelDetails.Name = "flowLayoutPanelDetails";
             flowLayoutPanelDetails.Size = new Size(585, 375);
             flowLayoutPanelDetails.TabIndex = 8;
@@ -98,27 +102,40 @@
             // 
             // picturePanel
             // 
-            picturePanel.Location = new Point(98, 690);
+            picturePanel.Location = new Point(98, 762);
             picturePanel.Name = "picturePanel";
-            picturePanel.Size = new Size(801, 433);
+            picturePanel.Size = new Size(701, 685);
             picturePanel.TabIndex = 10;
             // 
             // button2
             // 
-            button2.Location = new Point(1874, 581);
+            button2.Font = new Font("Segoe UI", 13F);
+            button2.Location = new Point(1762, 1132);
             button2.Name = "button2";
-            button2.Size = new Size(188, 58);
+            button2.Size = new Size(217, 113);
             button2.TabIndex = 11;
             button2.Text = "Export";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button3
+            // 
+            button3.Font = new Font("Segoe UI", 13F);
+            button3.Location = new Point(1468, 1132);
+            button3.Name = "button3";
+            button3.Size = new Size(240, 113);
+            button3.TabIndex = 12;
+            button3.Text = "Join";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // Form5
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.AliceBlue;
-            ClientSize = new Size(2171, 1185);
+            ClientSize = new Size(2171, 1524);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(picturePanel);
             Controls.Add(panel1);
@@ -129,7 +146,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "Form5";
-            Text = "Form5";
+            Text = "Viewing Group";
             Load += Form5_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -146,5 +163,6 @@
         private Panel panel1;
         private Panel picturePanel;
         private Button button2;
+        private Button button3;
     }
 }

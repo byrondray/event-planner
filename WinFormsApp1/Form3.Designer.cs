@@ -23,8 +23,7 @@
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// Required method for Designer support - do not modify the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -35,8 +34,6 @@
             button2 = new Button();
             maskedTextBox1 = new MaskedTextBox();
             errorProvider1 = new ErrorProvider(components);
-            label3 = new Label();
-            textBox2 = new TextBox();
             button5 = new Button();
             label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
@@ -45,35 +42,42 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(87, 153);
+            label1.Font = new Font("Segoe UI", 16F);
+            label1.Location = new Point(170, 246);
+            label1.Margin = new Padding(6, 0, 6, 0);
             label1.Name = "label1";
-            label1.Size = new Size(152, 41);
+            label1.Size = new Size(282, 72);
             label1.TabIndex = 0;
-            label1.Text = "Username";
+            label1.Text = "Username:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(87, 312);
+            label2.Font = new Font("Segoe UI", 16F);
+            label2.Location = new Point(170, 369);
+            label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
-            label2.RightToLeft = RightToLeft.Yes;
-            label2.Size = new Size(143, 41);
+            label2.Size = new Size(265, 72);
             label2.TabIndex = 1;
-            label2.Text = "Password";
+            label2.Text = "Password:";
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(275, 153);
+            textBox1.Font = new Font("Segoe UI", 14F);
+            textBox1.Location = new Point(468, 246);
+            textBox1.Margin = new Padding(6);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(311, 47);
+            textBox1.Size = new Size(590, 70);
             textBox1.TabIndex = 2;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
             // button2
             // 
-            button2.Location = new Point(680, 233);
+            button2.Font = new Font("Segoe UI", 14F);
+            button2.Location = new Point(680, 512);
+            button2.Margin = new Padding(6);
             button2.Name = "button2";
-            button2.Size = new Size(272, 58);
+            button2.Size = new Size(298, 78);
             button2.TabIndex = 5;
             button2.Text = "Register";
             button2.UseVisualStyleBackColor = true;
@@ -81,38 +85,25 @@
             // 
             // maskedTextBox1
             // 
-            maskedTextBox1.Location = new Point(275, 309);
+            maskedTextBox1.Font = new Font("Segoe UI", 14F);
+            maskedTextBox1.Location = new Point(468, 369);
+            maskedTextBox1.Margin = new Padding(6);
             maskedTextBox1.Name = "maskedTextBox1";
             maskedTextBox1.PasswordChar = '*';
-            maskedTextBox1.Size = new Size(311, 47);
+            maskedTextBox1.Size = new Size(590, 70);
             maskedTextBox1.TabIndex = 9;
             // 
             // errorProvider1
             // 
             errorProvider1.ContainerControl = this;
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(87, 233);
-            label3.Name = "label3";
-            label3.Size = new Size(88, 41);
-            label3.TabIndex = 10;
-            label3.Text = "Email";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(275, 233);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(311, 47);
-            textBox2.TabIndex = 11;
-            textBox2.TextChanged += textBox2_TextChanged;
-            // 
             // button5
             // 
-            button5.Location = new Point(680, 153);
+            button5.Font = new Font("Segoe UI", 14F);
+            button5.Location = new Point(298, 512);
+            button5.Margin = new Padding(6);
             button5.Name = "button5";
-            button5.Size = new Size(272, 58);
+            button5.Size = new Size(298, 78);
             button5.TabIndex = 12;
             button5.Text = "Login";
             button5.UseVisualStyleBackColor = true;
@@ -121,30 +112,30 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(42, 51);
+            label4.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            label4.Location = new Point(170, 62);
+            label4.Margin = new Padding(6, 0, 6, 0);
             label4.Name = "label4";
-            label4.Size = new Size(989, 54);
+            label4.Size = new Size(1201, 106);
             label4.TabIndex = 13;
-            label4.Text = "Welcome to the Event Planner. Please login or register.";
+            label4.Text = "Welcome to the Event Planner!";
             // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.AliceBlue;
-            ClientSize = new Size(1093, 533);
+            ClientSize = new Size(1497, 718);
             Controls.Add(label4);
             Controls.Add(button5);
-            Controls.Add(textBox2);
-            Controls.Add(label3);
             Controls.Add(maskedTextBox1);
             Controls.Add(button2);
             Controls.Add(textBox1);
             Controls.Add(label2);
             Controls.Add(label1);
+            Margin = new Padding(6);
             Name = "Form3";
-            Text = "Form3";
+            Text = "Event Planner";
             Load += Form3_Load;
             ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
@@ -159,8 +150,6 @@
         private Button button2;
         private MaskedTextBox maskedTextBox1;
         private ErrorProvider errorProvider1;
-        private TextBox textBox2;
-        private Label label3;
         private Button button5;
         private Label label4;
     }

@@ -46,6 +46,9 @@
             trackBar1 = new TrackBar();
             label3 = new Label();
             errorProvider1 = new ErrorProvider(components);
+            label4 = new Label();
+            radioButton1 = new RadioButton();
+            radioButton2 = new RadioButton();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
@@ -53,16 +56,16 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(1072, 131);
+            pictureBox1.Location = new Point(1191, 128);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(846, 689);
+            pictureBox1.Size = new Size(1247, 820);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
             // eventPlanLabel
             // 
             eventPlanLabel.AutoSize = true;
-            eventPlanLabel.Location = new Point(63, 157);
+            eventPlanLabel.Location = new Point(81, 240);
             eventPlanLabel.Name = "eventPlanLabel";
             eventPlanLabel.Size = new Size(446, 41);
             eventPlanLabel.TabIndex = 1;
@@ -70,16 +73,16 @@
             // 
             // eventNameInput
             // 
-            eventNameInput.Location = new Point(552, 157);
+            eventNameInput.Location = new Point(551, 240);
             eventNameInput.Name = "eventNameInput";
-            eventNameInput.Size = new Size(360, 47);
+            eventNameInput.Size = new Size(431, 47);
             eventNameInput.TabIndex = 2;
             eventNameInput.TextChanged += eventNameInput_TextChanged;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(681, 196);
+            label1.Location = new Point(699, 279);
             label1.Name = "label1";
             label1.Size = new Size(0, 41);
             label1.TabIndex = 3;
@@ -87,7 +90,7 @@
             // eventDateLabel
             // 
             eventDateLabel.AutoSize = true;
-            eventDateLabel.Location = new Point(63, 234);
+            eventDateLabel.Location = new Point(81, 317);
             eventDateLabel.Name = "eventDateLabel";
             eventDateLabel.Size = new Size(286, 41);
             eventDateLabel.TabIndex = 4;
@@ -96,7 +99,7 @@
             // imageUploadLabel
             // 
             imageUploadLabel.AutoSize = true;
-            imageUploadLabel.Location = new Point(63, 323);
+            imageUploadLabel.Location = new Point(81, 406);
             imageUploadLabel.Name = "imageUploadLabel";
             imageUploadLabel.Size = new Size(432, 41);
             imageUploadLabel.TabIndex = 6;
@@ -104,7 +107,7 @@
             // 
             // uploadImageButton
             // 
-            uploadImageButton.Location = new Point(533, 314);
+            uploadImageButton.Location = new Point(551, 397);
             uploadImageButton.Name = "uploadImageButton";
             uploadImageButton.Size = new Size(248, 58);
             uploadImageButton.TabIndex = 7;
@@ -114,14 +117,14 @@
             // 
             // dateTimePicker1
             // 
-            dateTimePicker1.Location = new Point(394, 234);
+            dateTimePicker1.Location = new Point(412, 317);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(500, 47);
             dateTimePicker1.TabIndex = 8;
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(65, 620);
+            richTextBox1.Location = new Point(83, 863);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new Size(697, 294);
             richTextBox1.TabIndex = 9;
@@ -129,9 +132,10 @@
             // 
             // inviteMembersButton
             // 
-            inviteMembersButton.Location = new Point(1144, 947);
+            inviteMembersButton.Font = new Font("Segoe UI", 13F);
+            inviteMembersButton.Location = new Point(1923, 1066);
             inviteMembersButton.Name = "inviteMembersButton";
-            inviteMembersButton.Size = new Size(251, 58);
+            inviteMembersButton.Size = new Size(515, 158);
             inviteMembersButton.TabIndex = 10;
             inviteMembersButton.Text = "Start Inviting Members";
             inviteMembersButton.UseVisualStyleBackColor = true;
@@ -140,7 +144,7 @@
             // comboBox1
             // 
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(610, 408);
+            comboBox1.Location = new Point(628, 491);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(302, 49);
             comboBox1.TabIndex = 11;
@@ -149,7 +153,7 @@
             // meetingOccurButton
             // 
             meetingOccurButton.AutoSize = true;
-            meetingOccurButton.Location = new Point(63, 408);
+            meetingOccurButton.Location = new Point(81, 491);
             meetingOccurButton.Name = "meetingOccurButton";
             meetingOccurButton.Size = new Size(503, 41);
             meetingOccurButton.TabIndex = 12;
@@ -157,7 +161,7 @@
             // 
             // progressBar1
             // 
-            progressBar1.Location = new Point(65, 947);
+            progressBar1.Location = new Point(83, 1190);
             progressBar1.Name = "progressBar1";
             progressBar1.Size = new Size(697, 58);
             progressBar1.TabIndex = 13;
@@ -165,7 +169,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(63, 500);
+            label2.Location = new Point(81, 583);
             label2.Name = "label2";
             label2.Size = new Size(385, 41);
             label2.TabIndex = 14;
@@ -173,7 +177,7 @@
             // 
             // trackBar1
             // 
-            trackBar1.Location = new Point(479, 500);
+            trackBar1.Location = new Point(497, 583);
             trackBar1.Name = "trackBar1";
             trackBar1.Size = new Size(260, 114);
             trackBar1.TabIndex = 15;
@@ -182,23 +186,58 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 15.9000006F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             label3.Location = new Point(65, 41);
             label3.Name = "label3";
-            label3.Size = new Size(639, 72);
+            label3.Size = new Size(1014, 106);
             label3.TabIndex = 16;
             label3.Text = "Start by creating an event";
+            label3.Click += label3_Click;
             // 
             // errorProvider1
             // 
             errorProvider1.ContainerControl = this;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(83, 673);
+            label4.Name = "label4";
+            label4.Size = new Size(244, 41);
+            label4.TabIndex = 17;
+            label4.Text = "Public or Private?";
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Location = new Point(83, 758);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(135, 45);
+            radioButton1.TabIndex = 18;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "Public";
+            radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(278, 758);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(144, 45);
+            radioButton2.TabIndex = 19;
+            radioButton2.TabStop = true;
+            radioButton2.Text = "Private";
+            radioButton2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.AliceBlue;
-            ClientSize = new Size(2048, 1110);
+            ClientSize = new Size(2589, 1451);
+            Controls.Add(radioButton2);
+            Controls.Add(radioButton1);
+            Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(trackBar1);
             Controls.Add(label2);
@@ -216,7 +255,7 @@
             Controls.Add(eventPlanLabel);
             Controls.Add(pictureBox1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Create Event";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
@@ -244,5 +283,8 @@
         private TrackBar trackBar1;
         private Label label3;
         private ErrorProvider errorProvider1;
+        private Label label4;
+        private RadioButton radioButton2;
+        private RadioButton radioButton1;
     }
 }

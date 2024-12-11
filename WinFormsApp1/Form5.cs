@@ -33,15 +33,23 @@ namespace WinFormsApp1
         {
             CheckIfUserIsAdmin();
 
+            bool isPublic = IsEventPublic();
+
+            bool shouldShowControls = isAdmin || isPublic;
+
+            label2.Visible = shouldShowControls;
+            textBox1.Visible = shouldShowControls;
+            button1.Visible = shouldShowControls;
+
             flowLayoutPanel1.AutoScroll = true;
 
-            label2.Visible = isAdmin;
-            textBox1.Visible = isAdmin;
-            button1.Visible = isAdmin;
+            button3.Visible = !IsUserInGroup();
 
             LoadEventDetails();
             LoadEventUsers();
         }
+
+
 
         private void CheckIfUserIsAdmin()
         {
@@ -72,6 +80,34 @@ namespace WinFormsApp1
                 dbConnection.CloseConnection();
             }
         }
+
+        private bool IsEventPublic()
+        {
+            string query = "SELECT Privacy FROM Events WHERE EventID = @EventID";
+
+            try
+            {
+                dbConnection.OpenConnection();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+
+                    object result = cmd.ExecuteScalar();
+                    return result != null && Convert.ToInt32(result) == 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                dbConnection.CloseConnection();
+            }
+        }
+
 
         private void LoadEventUsers()
         {
@@ -137,7 +173,7 @@ namespace WinFormsApp1
         private void LoadEventDetails()
         {
             string eventQuery = @"
-        SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage
+        SELECT EventID, EventName, EventDate, Frequency, Duration, Description, EventImage, Privacy
         FROM Events
         WHERE EventID = @EventID";
 
@@ -160,6 +196,9 @@ namespace WinFormsApp1
 
                             AddDetailLabel("Frequency:", reader["Frequency"].ToString());
                             AddDetailLabel("Duration:", $"{reader["Duration"]} hours");
+
+                            string privacy = Convert.ToInt32(reader["Privacy"]) == 0 ? "Public" : "Private";
+                            AddDetailLabel("Privacy:", privacy);
 
                             string description = reader["Description"].ToString();
                             if (description.Contains("Name:") && description.Contains("Recurring:"))
@@ -217,6 +256,39 @@ namespace WinFormsApp1
                 dbConnection.CloseConnection();
             }
         }
+
+        private bool IsUserInGroup()
+        {
+            string query = @"
+        SELECT COUNT(*)
+        FROM UserEvents
+        WHERE UserID = @UserID AND EventID = @EventID";
+
+            try
+            {
+                dbConnection.OpenConnection();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0; // Return true if user is already in the group
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                dbConnection.CloseConnection();
+            }
+        }
+
+
 
         private void AddDetailLabel(string labelText, string valueText)
         {
@@ -363,5 +435,60 @@ namespace WinFormsApp1
             }
         }
 
+        private void RefreshForm()
+        {
+            button3.Visible = false;
+
+            label2.Visible = true;
+            textBox1.Visible = true;
+            button1.Visible = true;
+
+            LoadEventUsers();
+            LoadEventDetails();
+        }
+
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string query = @"
+        INSERT INTO UserEvents (UserID, EventID, IsAdmin)
+        VALUES (@UserID, @EventID, 0)";
+
+            try
+            {
+                dbConnection.OpenConnection();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, dbConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("You have successfully joined the group!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        RefreshForm();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to join the group. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                dbConnection.CloseConnection();
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
